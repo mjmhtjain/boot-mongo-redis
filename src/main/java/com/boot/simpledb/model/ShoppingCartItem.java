@@ -1,25 +1,30 @@
 package com.boot.simpledb.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Table(name = "CartItem")
+@Table(name = "CARTITEM")
 public class ShoppingCartItem implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cart_seq")
+    @SequenceGenerator(name = "cart_seq", sequenceName = "CARTITEMSEQ", allocationSize = 1)
     public Long id;
 
-    @Column(name = "userId")
+    @Column(name = "userid")
     public Long userId;
 
-    @Column(name = "itemId")
+    @Column(name = "itemid")
     public Long itemId;
 
-    @Column(name = "itemName")
+    @Column(name = "itemname")
     public String itemName;
 
     @Column(name = "quantity")
