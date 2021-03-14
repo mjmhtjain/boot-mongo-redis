@@ -18,6 +18,7 @@ DOCKER_IMAGE_TAG=simpledb
 AZ_AKS=simpledbakscluster
 AZ_DNS_PREFIX=simpledbkubernetes
 AKS_POD=simpledbpod
+AKS_INFRA_RESOURCE_GROUP=AKS_INFRA_RESOURCE_GROUP
 
 # Create a resource group.
 az group create \
@@ -66,16 +67,26 @@ docker push $ACR_LOGIN_SERVER/$DOCKER_IMAGE_TAG:latest
 
 # create AKS cluster
 az aks create \
-  --resource-group=$AZ_RESOURCE_GROUP \
-  --name=$AZ_AKS \
+  --resource-group $AZ_RESOURCE_GROUP \
+  --name $AZ_AKS \
   --vm-set-type VirtualMachineScaleSets \
   --enable-cluster-autoscaler \
   --min-count 3 \
   --max-count 5 \
   --attach-acr $AZ_ACR \
-  --dns-name-prefix=$AZ_DNS_PREFIX \
+  --dns-name-prefix $AZ_DNS_PREFIX \
   --generate-ssh-keys \
   --load-balancer-sku standard
+
+AKS_INFRA_RESOURCE_GROUP=$(az aks show \
+  --resource-group $AZ_RESOURCE_GROUP \
+  --name $AZ_AKS \
+  --query "nodeResourceGroup" \
+  -o tsv)
+
+az network nic list \
+  --resource-group $AKS_INFRA_RESOURCE_GROUP \
+  -o table
 
 az aks get-credentials \
   --resource-group=$AZ_RESOURCE_GROUP \
