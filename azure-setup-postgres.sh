@@ -7,6 +7,9 @@ AZ_LOCATION=eastus
 AKS_POSTGRES=simpledbpostgres
 AKS_POSTGRES_USERNAME=postgresadmin
 AKS_POSTGRES_PASSWORD=postgresadmin
+AKS_POSTGRES_FIREWALL_RULE=AllowAllAzureServicesAndResourcesWithinAzureIps
+AKS_POSTGRES_FIREWALL_START=0.0.0.0
+AKS_POSTGRES_FIREWALL_END=0.0.0.0
 IP_ADDR=$(curl "http://whatismyip.akamai.com/")
 
 AZ_ACR=simpledbregistry
@@ -18,7 +21,6 @@ DOCKER_IMAGE_TAG=simpledb
 AZ_AKS=simpledbakscluster
 AZ_DNS_PREFIX=simpledbkubernetes
 AKS_POD=simpledbpod
-AKS_INFRA_RESOURCE_GROUP=AKS_INFRA_RESOURCE_GROUP
 
 # Create a resource group.
 az group create \
@@ -35,6 +37,13 @@ az postgres flexible-server create \
   --admin-password $AKS_POSTGRES_PASSWORD \
   --public-access $IP_ADDR
 
+az postgres flexible-server firewall-rule create \
+  --resource-group $AZ_RESOURCE_GROUP \
+  --name $AKS_POSTGRES \
+  --rule-name $AKS_POSTGRES_FIREWALL_RULE \
+  --start-ip-address $AKS_POSTGRES_FIREWALL_START \
+  --end-ip-address $AKS_POSTGRES_FIREWALL_END
+
 # Create a registry
 az acr create --resource-group $AZ_RESOURCE_GROUP \
   --location $AZ_LOCATION \
@@ -45,7 +54,6 @@ az acr create --resource-group $AZ_RESOURCE_GROUP \
 ACR_LOGIN_SERVER=$(az acr list \
   --resource-group $AZ_RESOURCE_GROUP \
   | jq -r '.[0].loginServer')
-
 
 
 # login to registry
@@ -77,16 +85,6 @@ az aks create \
   --dns-name-prefix $AZ_DNS_PREFIX \
   --generate-ssh-keys \
   --load-balancer-sku standard
-
-AKS_INFRA_RESOURCE_GROUP=$(az aks show \
-  --resource-group $AZ_RESOURCE_GROUP \
-  --name $AZ_AKS \
-  --query "nodeResourceGroup" \
-  -o tsv)
-
-az network nic list \
-  --resource-group $AKS_INFRA_RESOURCE_GROUP \
-  -o table
 
 az aks get-credentials \
   --resource-group=$AZ_RESOURCE_GROUP \

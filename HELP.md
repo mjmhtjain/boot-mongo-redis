@@ -59,5 +59,5 @@ kubectl create clusterrolebinding dashboard-admin-sa \
 
 kubectl get secrets
 
-kubectl describe secret dashboard-admin-sa-token-p5jvq
+kubectl describe secret dashboard-admin-sa-token-fr9hm
 ```
