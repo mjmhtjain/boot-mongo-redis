@@ -44,6 +44,8 @@ az postgres flexible-server firewall-rule create \
   --start-ip-address $AKS_POSTGRES_FIREWALL_START \
   --end-ip-address $AKS_POSTGRES_FIREWALL_END
 
+./migration/initdb.sh
+
 # Create a registry
 az acr create --resource-group $AZ_RESOURCE_GROUP \
   --location $AZ_LOCATION \
