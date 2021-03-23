@@ -1,17 +1,16 @@
 package com.boot.simpledb.controller;
 
 import com.boot.simpledb.model.ShoppingCart;
+import com.boot.simpledb.model.ShoppingCartItem;
 import com.boot.simpledb.service.ShoppingCartService;
 import lombok.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -50,5 +49,17 @@ public class ShoppingCartController {
                     .unprocessableEntity()
                     .build();
         }
+    }
+
+    @PostMapping("/item")
+    ResponseEntity addItem(@RequestBody ShoppingCartItem shoppingCartItem) {
+        log.info("addItem: ShoppingCartItem: {}", shoppingCartItem);
+
+        ShoppingCartItem res = shoppingCartService.addItem(shoppingCartItem);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(res);
     }
 }

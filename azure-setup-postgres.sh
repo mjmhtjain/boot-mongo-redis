@@ -4,12 +4,13 @@ set -e
 AZ_RESOURCE_GROUP=simpledbresourcegroup
 AZ_LOCATION=eastus
 
-AKS_POSTGRES=simpledbpostgres
-AKS_POSTGRES_USERNAME=postgresadmin
-AKS_POSTGRES_PASSWORD=postgresadmin
-AKS_POSTGRES_FIREWALL_RULE=AllowAllAzureServicesAndResourcesWithinAzureIps
-AKS_POSTGRES_FIREWALL_START=0.0.0.0
-AKS_POSTGRES_FIREWALL_END=0.0.0.0
+AZ_POSTGRES_SERVER=simpledbpostgres
+AZ_POSTGRES_USERNAME=puffyFerret0
+AZ_POSTGRES_PASSWORD=ip69BiBpQ2XPdyNGKofeSQ
+AZ_POSTGRES_FIREWALL_RULE_ALLOW_AZURE=AllowAllAzureServices
+AZ_POSTGRES_FIREWALL_RULE_ALLOW_LOCAL=AllowAllLocal
+AZ_POSTGRES_FIREWALL_ALLOW_AZURE_START=0.0.0.0
+AZ_POSTGRES_FIREWALL_ALLOW_AZURE_END=0.0.0.0
 IP_ADDR=$(curl "http://whatismyip.akamai.com/")
 
 AZ_ACR=simpledbregistry
@@ -28,23 +29,27 @@ az group create \
     --location $AZ_LOCATION \
     | jq
 
-# Create postgres flex server
-az postgres flexible-server create \
-  --location $AZ_LOCATION \
-  --resource-group $AZ_RESOURCE_GROUP \
-  --name $AKS_POSTGRES \
-  --admin-user $AKS_POSTGRES_USERNAME \
-  --admin-password $AKS_POSTGRES_PASSWORD \
-  --public-access $IP_ADDR
+# Create postgres server
+az postgres server create \
+  -l $AZ_LOCATION \
+  -g $AZ_RESOURCE_GROUP \
+  -n $AZ_POSTGRES_SERVER \
+  -u $AZ_POSTGRES_USERNAME \
+  -p $AZ_POSTGRES_PASSWORD
 
-az postgres flexible-server firewall-rule create \
+az postgres server firewall-rule create \
+  --name $AZ_POSTGRES_FIREWALL_RULE_ALLOW_AZURE \
   --resource-group $AZ_RESOURCE_GROUP \
-  --name $AKS_POSTGRES \
-  --rule-name $AKS_POSTGRES_FIREWALL_RULE \
-  --start-ip-address $AKS_POSTGRES_FIREWALL_START \
-  --end-ip-address $AKS_POSTGRES_FIREWALL_END
+  --server-name $AZ_POSTGRES_SERVER \
+  --start-ip-address $AZ_POSTGRES_FIREWALL_ALLOW_AZURE_START \
+  --end-ip-address $AZ_POSTGRES_FIREWALL_ALLOW_AZURE_END
 
-./migration/initdb.sh
+az postgres server firewall-rule create \
+  --name $AZ_POSTGRES_FIREWALL_RULE_ALLOW_LOCAL \
+  --resource-group $AZ_RESOURCE_GROUP \
+  --server-name $AZ_POSTGRES_SERVER \
+  --start-ip-address $IP_ADDR \
+  --end-ip-address $IP_ADDR
 
 # Create a registry
 az acr create --resource-group $AZ_RESOURCE_GROUP \

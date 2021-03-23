@@ -27,7 +27,7 @@ spec:
             - containerPort: 8080
           env:
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:postgresql://simpledbpostgres.postgres.database.azure.com:5432/postgres?user=postgresadmin&password=postgresadmin&sslmode=require"
+              value: "jdbc:postgresql://simpledbpostgres.postgres.database.azure.com:5432/postgres?user=puffyFerret0%40simpledbpostgres&password=ip69BiBpQ2XPdyNGKofeSQ&sslmode=require"
           resources:
             requests:
               cpu: 250m

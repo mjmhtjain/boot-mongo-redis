@@ -3,6 +3,7 @@ package com.boot.simpledb.controller;
 import com.boot.simpledb.model.ShoppingCart;
 import com.boot.simpledb.model.ShoppingCartItem;
 import com.boot.simpledb.service.ShoppingCartService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -16,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Arrays;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -73,5 +75,34 @@ public class ShoppingCartControllerTest {
                 .perform(get("/api/v1/shoppingCart/{userId}", "someValue"))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    public void shoppingCartItems_validRequestBody_expect2xx() throws Exception {
+        ShoppingCartItem item = new ShoppingCartItem(Long.parseLong("1"),
+                Long.parseLong("1"),
+                Long.parseLong("1"),
+                "Item1",
+                Long.parseLong("1"));
+
+        Mockito.when(shoppingCartService.addItem(item))
+                .thenReturn(item);
+
+        this.mockMvc
+                .perform(post("/api/v1/item")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(item)))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(item.id));
+    }
+
+    public static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
