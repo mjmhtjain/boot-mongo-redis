@@ -2,7 +2,7 @@ version: '2'
 
 services:
   app:
-    image: 'simpledb:latest'
+    image: 'simpledb'
     build:
       context: .
     container_name: simpledb
