@@ -62,28 +62,11 @@ ACR_LOGIN_SERVER=$(az acr list \
   --resource-group $AZ_RESOURCE_GROUP \
   | jq -r '.[0].loginServer')
 
+# push image to ACR
 az acr import  \
   -n $AZ_ACR \
   --source docker.io/mjmhtjain/$DOCKER_IMAGE_TAG:latest \
   --image $DOCKER_IMAGE_TAG:latest
-
-
-# login to registry
-#AZ_ACR_PASSWORD=$(az acr credential show \
-#  --resource-group $AZ_RESOURCE_GROUP \
-#  --name $AZ_ACR | jq -r '.passwords[0].value')
-
-# build docker image
-#docker build --tag $DOCKER_IMAGE_TAG .
-#docker tag $DOCKER_IMAGE_TAG $ACR_LOGIN_SERVER/$DOCKER_IMAGE_TAG:latest
-
-# push image to ACR
-#echo $AZ_ACR_PASSWORD | docker login $ACR_LOGIN_SERVER \
-#  --username $AZ_ACR \
-#  --password-stdin
-
-#docker push $ACR_LOGIN_SERVER/$DOCKER_IMAGE_TAG:latest
-
 
 # create AKS cluster
 az aks create \
