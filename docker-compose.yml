@@ -8,20 +8,12 @@ services:
     container_name: simpledb
     depends_on:
       - mongo
-    environment:
-      - AUTH_DB=admin
-      - USERNAME=admin
-      - PASSWORD=secret
-      - DB=admin
-      - HOST=localhost
-      - PORT=27017
     ports:
       - 8080:8080
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/admin
 
   mongo:
     image: mongo
     ports:
-      - 20717:20717
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=secret
+      - 27017:27017
