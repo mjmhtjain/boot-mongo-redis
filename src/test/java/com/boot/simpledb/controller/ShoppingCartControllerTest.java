@@ -79,7 +79,7 @@ public class ShoppingCartControllerTest {
 
     @Test
     public void shoppingCartItems_validRequestBody_expect2xx() throws Exception {
-        ShoppingCartItem item = new ShoppingCartItem(Long.parseLong("1"),
+        ShoppingCartItem item = new ShoppingCartItem("1",
                 Long.parseLong("1"),
                 Long.parseLong("1"),
                 "Item1",

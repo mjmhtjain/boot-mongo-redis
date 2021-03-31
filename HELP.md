@@ -21,7 +21,19 @@ The following guides illustrate how to use some features concretely:
 * Maven build and run commands
 ```
 mvn clean package -DskipTests
-java -jar target/WebfluxService-0.0.1-SNAPSHOT.jar
+
+java -jar target/WebfluxService-0.0.1-SNAPSHOT.jar 
+--OR--
+mvn spring-boot:run
+```
+
+* Run Mongo Docker locally
+```
+docker run -d \
+-p 27017:27017 \
+-e MONGO_INITDB_ROOT_USERNAME=mongoadmin \
+-e MONGO_INITDB_ROOT_PASSWORD=secret \
+mongo
 ```
 
 * docker build and run using the default Dockerfile and docker-compose file
