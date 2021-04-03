@@ -1,23 +1,19 @@
 #!/bin/bash
 set -e
 
-AZ_RESOURCE_GROUP=simpledbresourcegroup
+uniqueId=$RANDOM
+AZ_RESOURCE_GROUP=cosmosdbrg
 AZ_LOCATION=eastus
 
-AZ_POSTGRES_SERVER=simpledbpostgres
-AZ_POSTGRES_USERNAME=puffyFerret0
-AZ_POSTGRES_PASSWORD=ip69BiBpQ2XPdyNGKofeSQ
-AZ_POSTGRES_FIREWALL_RULE_ALLOW_AZURE=AllowAllAzureServices
-AZ_POSTGRES_FIREWALL_RULE_ALLOW_LOCAL=AllowAllLocal
-AZ_POSTGRES_FIREWALL_ALLOW_AZURE_START=0.0.0.0
-AZ_POSTGRES_FIREWALL_ALLOW_AZURE_END=0.0.0.0
-IP_ADDR=$(curl "http://whatismyip.akamai.com/")
+accountName="cosmos-$uniqueId"
+databaseName='database1'
+collection1Name='ShoppingCart'
 
 AZ_ACR=simpledbregistry
 ACR_LOGIN_SERVER=simpledbregistryserver
 AZ_ACR_PASSWORD=password
 
-DOCKER_IMAGE_TAG=simpledb
+DOCKER_IMAGE_TAG=simpledb:v1.2
 
 AZ_AKS=simpledbakscluster
 AZ_DNS_PREFIX=simpledbkubernetes
@@ -29,27 +25,26 @@ az group create \
     --location $AZ_LOCATION \
     | jq
 
-# Create postgres server
-az postgres server create \
-  -l $AZ_LOCATION \
-  -g $AZ_RESOURCE_GROUP \
-  -n $AZ_POSTGRES_SERVER \
-  -u $AZ_POSTGRES_USERNAME \
-  -p $AZ_POSTGRES_PASSWORD
+# Create MongoDB server
+az cosmosdb create \
+    -n $accountName \
+    -g $AZ_RESOURCE_GROUP \
+    --kind MongoDB \
+    --locations regionName='East US' failoverPriority=0 isZoneRedundant=True
 
-az postgres server firewall-rule create \
-  --name $AZ_POSTGRES_FIREWALL_RULE_ALLOW_AZURE \
-  --resource-group $AZ_RESOURCE_GROUP \
-  --server-name $AZ_POSTGRES_SERVER \
-  --start-ip-address $AZ_POSTGRES_FIREWALL_ALLOW_AZURE_START \
-  --end-ip-address $AZ_POSTGRES_FIREWALL_ALLOW_AZURE_END
+az cosmosdb mongodb database create \
+    -a $accountName \
+    -g $AZ_RESOURCE_GROUP \
+    -n $databaseName
 
-az postgres server firewall-rule create \
-  --name $AZ_POSTGRES_FIREWALL_RULE_ALLOW_LOCAL \
-  --resource-group $AZ_RESOURCE_GROUP \
-  --server-name $AZ_POSTGRES_SERVER \
-  --start-ip-address $IP_ADDR \
-  --end-ip-address $IP_ADDR
+#az cosmosdb mongodb collection create \
+#    -a $accountName \
+#    -g $AZ_RESOURCE_GROUP \
+#    -d 'database1' \
+#    -n 'ShoppingCart' \
+#    --max-throughput 10000
+
+# disable georedundancy and enable auto-scale in collection
 
 # Create a registry
 az acr create --resource-group $AZ_RESOURCE_GROUP \
@@ -57,10 +52,6 @@ az acr create --resource-group $AZ_RESOURCE_GROUP \
   --name $AZ_ACR \
   --sku Basic \
   --admin-enabled true
-
-ACR_LOGIN_SERVER=$(az acr list \
-  --resource-group $AZ_RESOURCE_GROUP \
-  | jq -r '.[0].loginServer')
 
 # push image to ACR
 az acr import  \
@@ -89,4 +80,4 @@ az aks get-credentials \
 # deploy image to AKS instance
 kubectl apply -f deployment.yaml
 
-kubectl get services --watch
+kubectl get pods --watch

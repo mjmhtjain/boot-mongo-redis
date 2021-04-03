@@ -22,12 +22,12 @@ spec:
         "beta.kubernetes.io/os": linux
       containers:
         - name: simpledb
-          image: simpledbregistry.azurecr.io/simpledb:latest
+          image: simpledbregistry.azurecr.io/simpledb:v1.2
           ports:
             - containerPort: 8080
           env:
-            - name: SPRING_DATASOURCE_URL
-              value: "jdbc:postgresql://simpledbpostgres.postgres.database.azure.com:5432/postgres?user=puffyFerret0%40simpledbpostgres&password=ip69BiBpQ2XPdyNGKofeSQ&sslmode=require"
+            - name: MONGO_URI
+              value: "mongodb://cosmos-13767:o3PnYHAUZsqQFrTARxDaRAUdMxjtRksiJpnJM5OOgcqsrcua7D6wC78GO834XqnGrRpkNMkNM8ma1dStFizuQQ==@cosmos-13767.mongo.cosmos.azure.com:10255/database1?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@cosmos-13767@"
           resources:
             requests:
               cpu: 250m
