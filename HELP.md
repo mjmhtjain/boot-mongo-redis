@@ -71,7 +71,6 @@ kubectl create clusterrolebinding dashboard-admin-sa \
 
 kubectl get secrets
 
-kubectl describe secret dashboard-admin-sa-token-xpf4x
+kubectl describe secret dashboard-admin-sa-token-jpkk9
 
-az postgres flexible-server stop --resource-group $AZ_RESOURCE_GROUP --name $AKS_POSTGRES
 ```
