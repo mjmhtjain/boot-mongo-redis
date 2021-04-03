@@ -7,7 +7,7 @@ AZ_LOCATION=eastus
 
 accountName="cosmos-$uniqueId"
 databaseName='database1'
-collection1Name='ShoppingCart'
+collectionName='ShoppingCart'
 
 AZ_ACR=simpledbregistry
 ACR_LOGIN_SERVER=simpledbregistryserver
@@ -37,12 +37,12 @@ az cosmosdb mongodb database create \
     -g $AZ_RESOURCE_GROUP \
     -n $databaseName
 
-#az cosmosdb mongodb collection create \
-#    -a $accountName \
-#    -g $AZ_RESOURCE_GROUP \
-#    -d 'database1' \
-#    -n 'ShoppingCart' \
-#    --max-throughput 10000
+az cosmosdb mongodb collection create \
+    -a $accountName \
+    -g $AZ_RESOURCE_GROUP \
+    -d $databaseName \
+    -n $collectionName \
+    --throughput "10000"
 
 # disable georedundancy and enable auto-scale in collection
 
@@ -56,8 +56,8 @@ az acr create --resource-group $AZ_RESOURCE_GROUP \
 # push image to ACR
 az acr import  \
   -n $AZ_ACR \
-  --source docker.io/mjmhtjain/$DOCKER_IMAGE_TAG:latest \
-  --image $DOCKER_IMAGE_TAG:latest
+  --source docker.io/mjmhtjain/$DOCKER_IMAGE_TAG \
+  --image $DOCKER_IMAGE_TAG
 
 # create AKS cluster
 az aks create \
