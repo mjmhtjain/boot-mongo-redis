@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.boot</groupId>
-    <artifactId>simpledb</artifactId>
+    <artifactId>simpledb-mongo</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>simpledb</name>
+    <name>simpledb-mongo</name>
     <description>Demo project for Spring Boot with Postgres</description>
     <properties>
         <java.version>15</java.version>
