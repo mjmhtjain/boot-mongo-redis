@@ -12,7 +12,7 @@ spec:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 1
-  minReadySeconds: 5
+  minReadySeconds: 10
   template:
     metadata:
       labels:
@@ -27,7 +27,7 @@ spec:
             - containerPort: 8080
           env:
             - name: MONGO_URI
-              value: "mongodb://cosmos-13767:o3PnYHAUZsqQFrTARxDaRAUdMxjtRksiJpnJM5OOgcqsrcua7D6wC78GO834XqnGrRpkNMkNM8ma1dStFizuQQ==@cosmos-13767.mongo.cosmos.azure.com:10255/database1?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@cosmos-13767@"
+              value: "mongodb://cosmos-13767:ddvs7UdXE8Nh7hWb7e44W1Qp21fzA05K5g7zHUsyMxTEVhaxRMIodmh3aIy8DkG7CQ0GDMCHdkG1Gp3Otm5jIA==@cosmos-13767.mongo.cosmos.azure.com:10255/database1?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@cosmos-13767@"
           resources:
             requests:
               cpu: 250m
@@ -53,7 +53,7 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: simpledb-hpa
 spec:
-  maxReplicas: 3 # define max replica count
+  maxReplicas: 5 # define max replica count
   minReplicas: 3  # define min replica count
   scaleTargetRef:
     apiVersion: apps/v1
