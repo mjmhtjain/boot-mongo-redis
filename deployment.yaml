@@ -22,7 +22,7 @@ spec:
         "beta.kubernetes.io/os": linux
       containers:
         - name: simpledb
-          image: simpledbregistry.azurecr.io/simpledb:v1.2
+          image: simpledbregistry.azurecr.io/simpledb-mongo:latest
           ports:
             - containerPort: 8080
           env:

@@ -51,7 +51,7 @@ KUBE_RESOURCE_GROUP=simpledbrg
 KUBE_LOCATION=eastus
 
 KUBE_ACR=simpledbregistry
-DOCKER_IMAGE_TAG=simpledb:v1.2
+DOCKER_IMAGE_TAG=simpledb-mongo:latest
 
 KUBE_AKS=simpledbakscluster
 KUBE_DNS_PREFIX=simpledbkubernetes
