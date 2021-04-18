@@ -5,5 +5,5 @@ import com.boot.simpledb.model.ShoppingCartItem;
 
 public interface ShoppingCartService {
     ShoppingCart fetchShoppingCartItemsByUserId(Long userId);
-    ShoppingCartItem addItem(ShoppingCartItem shoppingCartItem);
+    ShoppingCart addItem(long userId, ShoppingCartItem shoppingCartItem);
 }

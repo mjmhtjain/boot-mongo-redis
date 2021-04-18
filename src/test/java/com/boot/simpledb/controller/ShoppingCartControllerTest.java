@@ -14,7 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -42,11 +42,7 @@ public class ShoppingCartControllerTest {
 
     @Test
     public void shoppingCartItems_validValues_expectingCorrectResponse() throws Exception {
-        ShoppingCartItem item = new ShoppingCartItem(Long.parseLong("1"),
-                Long.parseLong("1"),
-                "",
-                Long.parseLong("1"));
-        ShoppingCart cart = new ShoppingCart(Arrays.asList(item));
+        ShoppingCart cart = mockShoppingCart();
 
         Mockito.when(shoppingCartService.fetchShoppingCartItemsByUserId(Long.parseLong("1")))
                 .thenReturn(cart);
@@ -57,16 +53,13 @@ public class ShoppingCartControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.shoppingCartItems").isArray())
-                .andExpect(jsonPath("$.shoppingCartItems.[0].itemName").value(item.itemName));
+                .andExpect(jsonPath("$.shoppingCartItems.[0].itemName")
+                        .value(cart.shoppingCartItems.get(0).itemName));
     }
 
     @Test
     public void shoppingCartItems_invalidUserId_expect406() throws Exception {
-        ShoppingCartItem item = new ShoppingCartItem(Long.parseLong("1"),
-                Long.parseLong("1"),
-                "",
-                Long.parseLong("1"));
-        ShoppingCart cart = new ShoppingCart(Arrays.asList(item));
+        ShoppingCart cart = mockShoppingCart();
 
         Mockito.when(shoppingCartService.fetchShoppingCartItemsByUserId(Long.parseLong("1")))
                 .thenReturn(cart);
@@ -79,23 +72,23 @@ public class ShoppingCartControllerTest {
 
     @Test
     public void shoppingCartItems_validRequestBody_expect2xx() throws Exception {
-        ShoppingCartItem item = new ShoppingCartItem("1",
-                Long.parseLong("1"),
-                Long.parseLong("1"),
-                "Item1",
-                Long.parseLong("1"));
+        ShoppingCartItem item = new ShoppingCartItem("2", "item2", 2);
 
-        Mockito.when(shoppingCartService.addItem(item))
-                .thenReturn(item);
+        ShoppingCart expectedCart = mockShoppingCart();
+        expectedCart.shoppingCartItems.add(item);
+
+        Mockito.when(shoppingCartService.addItem(expectedCart.userId, item))
+                .thenReturn(expectedCart);
 
         this.mockMvc
-                .perform(post("/api/v1/item")
+                .perform(post("/api/v1/item/{userId}", expectedCart.userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(item)))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value(item.id));
+                .andExpect(jsonPath("$.userId").value(expectedCart.userId))
+                .andExpect(jsonPath("$.shoppingCartItems.[1].id").value(expectedCart.shoppingCartItems.get(1).id));
     }
 
     public static String asJsonString(final Object obj) {
@@ -104,5 +97,15 @@ public class ShoppingCartControllerTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private ShoppingCart mockShoppingCart() {
+        ShoppingCart shoppingCart = new ShoppingCart();
+
+        shoppingCart.userId = 1;
+        shoppingCart.shoppingCartItems = new ArrayList<>();
+        shoppingCart.shoppingCartItems.add(new ShoppingCartItem("1", "", Long.parseLong("1")));
+
+        return shoppingCart;
     }
 }

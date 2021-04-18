@@ -43,23 +43,34 @@ public class ShoppingCartController {
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(res);
         } catch (NumberFormatException exp) {
-            log.error("userId conversion error: {}", exp);
-
-            return ResponseEntity
-                    .unprocessableEntity()
-                    .build();
+            return NumberFormatExceptionResponse(exp);
         }
     }
 
-    @PostMapping("/item")
-    ResponseEntity addItem(@RequestBody ShoppingCartItem shoppingCartItem) {
-        log.info("addItem: ShoppingCartItem: {}", shoppingCartItem);
+    @PostMapping("/item/{userId}")
+    ResponseEntity addItem(@RequestBody ShoppingCartItem shoppingCartItem,
+                           @PathVariable @NonNull String userId) {
+        log.info("addItem: ShoppingCartItem: {}, userId: {}", shoppingCartItem, userId);
 
-        ShoppingCartItem res = shoppingCartService.addItem(shoppingCartItem);
+        try {
+            long userIdLongVal = Long.parseLong(userId);
+            ShoppingCart res = shoppingCartService.addItem(userIdLongVal, shoppingCartItem);
+
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(res);
+        } catch (NumberFormatException exp) {
+            return NumberFormatExceptionResponse(exp);
+        }
+
+    }
+
+    private ResponseEntity NumberFormatExceptionResponse(NumberFormatException exp) {
+        log.error("userId conversion error: {}", exp);
 
         return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(res);
+                .unprocessableEntity()
+                .build();
     }
 }

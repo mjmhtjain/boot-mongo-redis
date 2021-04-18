@@ -1,13 +1,11 @@
 package com.boot.simpledb.repository;
 
-import com.boot.simpledb.model.ShoppingCartItem;
+import com.boot.simpledb.model.ShoppingCart;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public interface ShoppingCartRepository extends MongoRepository<ShoppingCartItem, Long> {
+public interface ShoppingCartRepository extends MongoRepository<ShoppingCart, String> {
 
-    List<ShoppingCartItem> findByUserId(long userId);
+    ShoppingCart findByUserId(long userId);
 }

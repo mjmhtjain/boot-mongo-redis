@@ -32,31 +32,49 @@ public class ShoppingCartServiceImplTests {
     @Test
     public void fetchShoppingCartItemsByUserId_validData_expectGoodResponse() {
         String userId = "1";
-        long userIdLongVal = Long.parseLong(userId);
-        List<ShoppingCartItem> itemList = genCartItemList(userId);
-        ShoppingCart expectedResponse = new ShoppingCart(itemList);
+        ShoppingCart cart = genCart(userId);
 
-        Mockito.when(shoppingCartRepository.findByUserId(userIdLongVal))
-                .thenReturn(itemList);
+        Mockito.when(shoppingCartRepository.findByUserId(cart.userId))
+                .thenReturn(cart);
 
         ShoppingCart actualResponse = shoppingCartServiceImpl
-                .fetchShoppingCartItemsByUserId(userIdLongVal);
+                .fetchShoppingCartItemsByUserId(cart.userId);
 
-        assertEquals(expectedResponse, actualResponse);
+        assertEquals(cart, actualResponse);
     }
 
-    private List<ShoppingCartItem> genCartItemList(String userId) {
+    @Test
+    public void addItem_validData() {
+        String userId = "1";
+        ShoppingCart cart = genCart(userId);
+        ShoppingCart expectedCart = genCart(userId);
+        ShoppingCartItem item = new ShoppingCartItem("abc", "abc", 1);
+        expectedCart.shoppingCartItems.add(item);
+
+        Mockito.when(shoppingCartRepository.findByUserId(cart.userId))
+                .thenReturn(cart);
+
+        Mockito.when(shoppingCartRepository.save(expectedCart))
+                .thenReturn(expectedCart);
+
+        ShoppingCart actualResponse = shoppingCartServiceImpl
+                .addItem(cart.userId, item);
+
+        assertEquals(expectedCart, actualResponse);
+    }
+
+    private ShoppingCart genCart(String userId) {
         List<ShoppingCartItem> cartItemList = new ArrayList<>();
+        long userIdLongVal = Long.parseLong(userId);
 
         for (int i = 1; i <= 5; i++) {
-            ShoppingCartItem item = new ShoppingCartItem(Long.parseLong(userId),
-                    Long.valueOf(i),
+            ShoppingCartItem item = new ShoppingCartItem(userId,
                     "Item" + i,
                     Long.valueOf(i));
 
             cartItemList.add(item);
         }
 
-        return cartItemList;
+        return new ShoppingCart(userIdLongVal, cartItemList);
     }
 }
