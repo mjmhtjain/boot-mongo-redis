@@ -38,6 +38,13 @@ public class ShoppingCartController {
 
             ShoppingCart res = shoppingCartService.fetchShoppingCartItemsByUserId(userIdLongVal);
 
+            if(res == null){
+                return ResponseEntity
+                        .status(HttpStatus.NO_CONTENT)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .build();
+            }
+
             return ResponseEntity
                     .ok()
                     .contentType(MediaType.APPLICATION_JSON)

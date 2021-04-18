@@ -32,15 +32,6 @@ public class ShoppingCartControllerTest {
     private ShoppingCartService shoppingCartService;
 
     @Test
-    public void demo() throws Exception {
-        this.mockMvc
-                .perform(get("/api/v1"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().string("Hello!!"));
-    }
-
-    @Test
     public void shoppingCartItems_validValues_expectingCorrectResponse() throws Exception {
         ShoppingCart cart = mockShoppingCart();
 
@@ -68,6 +59,20 @@ public class ShoppingCartControllerTest {
                 .perform(get("/api/v1/shoppingCart/{userId}", "someValue"))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    public void shoppingCartItems_nonExistingUser_expect204ContentNotFound() throws Exception {
+        ShoppingCart cart = mockShoppingCart();
+        long userId = 1;
+
+        Mockito.when(shoppingCartService.fetchShoppingCartItemsByUserId(userId))
+                .thenReturn(null);
+
+        this.mockMvc
+                .perform(get("/api/v1/shoppingCart/{userId}", userId))
+                .andDo(print())
+                .andExpect(status().isNoContent());
     }
 
     @Test
