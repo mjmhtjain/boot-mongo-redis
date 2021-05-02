@@ -1,19 +1,25 @@
 version: '2'
 
 services:
-  app:
-    image: 'simpledb'
-    build:
-      context: .
-    container_name: simpledb
-    depends_on:
-      - mongo
-    ports:
-      - 8080:8080
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/admin
+#  app:
+#    image: 'simpledb'
+#    build:
+#      context: .
+#    container_name: simpledb
+#    depends_on:
+#      - mongo
+#    ports:
+#      - 8080:8080
+#    environment:
+#      - MONGO_URI=mongodb://mongo:27017/admin
 
   mongo:
     image: mongo
     ports:
       - 27017:27017
+
+  cache:
+    image: redis
+    command: redis-server --requirepass password
+    ports:
+      - 6379:6379
