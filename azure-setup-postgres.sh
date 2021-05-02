@@ -38,12 +38,17 @@ REDIS_RESOURCE_GROUP=redisrg
 REDIS_LOCATION=eastus
 REDIS_NAME=redis-13767
 
+az group create \
+    --name $REDIS_RESOURCE_GROUP \
+    --location $REDIS_LOCATION \
+    | jq
+
 az redis create \
   --location $REDIS_LOCATION \
   --name $REDIS_NAME \
   --resource-group $REDIS_RESOURCE_GROUP \
   --sku Basic \
-  --minimum-tls-version 1.2
+  --minimum-tls-version 1.2 \
   --vm-size c0 ## {c0, c1, c2, c3, c4, c5, c6, p1, p2, p3, p4, p5}
 
 # Setup K8 cluster and registry

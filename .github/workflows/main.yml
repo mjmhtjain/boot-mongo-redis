@@ -33,7 +33,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: mjmhtjain/simpledb-mongo:latest
+          tags: mjmhtjain/boot-mongo-redis:latest
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
