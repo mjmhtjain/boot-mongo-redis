@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.ArrayList;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -35,7 +35,7 @@ public class ShoppingCartControllerTest {
     public void shoppingCartItems_validValues_expectingCorrectResponse() throws Exception {
         ShoppingCart cart = mockShoppingCart();
 
-        Mockito.when(shoppingCartService.fetchShoppingCartItemsByUserId(Long.parseLong("1")))
+        Mockito.when(shoppingCartService.fetchShoppingCartItems(Long.parseLong("1")))
                 .thenReturn(cart);
 
         this.mockMvc
@@ -52,7 +52,7 @@ public class ShoppingCartControllerTest {
     public void shoppingCartItems_invalidUserId_expect406() throws Exception {
         ShoppingCart cart = mockShoppingCart();
 
-        Mockito.when(shoppingCartService.fetchShoppingCartItemsByUserId(Long.parseLong("1")))
+        Mockito.when(shoppingCartService.fetchShoppingCartItems(Long.parseLong("1")))
                 .thenReturn(cart);
 
         this.mockMvc
@@ -66,7 +66,7 @@ public class ShoppingCartControllerTest {
         ShoppingCart cart = mockShoppingCart();
         long userId = 1;
 
-        Mockito.when(shoppingCartService.fetchShoppingCartItemsByUserId(userId))
+        Mockito.when(shoppingCartService.fetchShoppingCartItems(userId))
                 .thenReturn(null);
 
         this.mockMvc
@@ -76,7 +76,7 @@ public class ShoppingCartControllerTest {
     }
 
     @Test
-    public void shoppingCartItems_validRequestBody_expect2xx() throws Exception {
+    public void addItem_validRequestBody_expect2xx() throws Exception {
         ShoppingCartItem item = new ShoppingCartItem("2", "item2", 2);
 
         ShoppingCart expectedCart = mockShoppingCart();
@@ -86,7 +86,7 @@ public class ShoppingCartControllerTest {
                 .thenReturn(expectedCart);
 
         this.mockMvc
-                .perform(post("/api/v1/item/{userId}", expectedCart.userId)
+                .perform(put("/api/v1/shoppingCart/{userId}/item", expectedCart.userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(item)))
                 .andDo(print())

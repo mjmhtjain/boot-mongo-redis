@@ -31,14 +31,14 @@ public class ShoppingCartController {
 
     @GetMapping("/shoppingCart/{userId}")
     ResponseEntity shoppingCartItems(@PathVariable @NonNull String userId) {
-        log.info("demo: userId: {}", userId);
+        log.info("shoppingCartItems: userId: {}", userId);
 
         try {
             long userIdLongVal = Long.parseLong(userId);
 
-            ShoppingCart res = shoppingCartService.fetchShoppingCartItemsByUserId(userIdLongVal);
+            ShoppingCart res = shoppingCartService.fetchShoppingCartItems(userIdLongVal);
 
-            if(res == null){
+            if (res == null) {
                 return ResponseEntity
                         .status(HttpStatus.NO_CONTENT)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -54,7 +54,7 @@ public class ShoppingCartController {
         }
     }
 
-    @PostMapping("/item/{userId}")
+    @PutMapping("/shoppingCart/{userId}/item")
     ResponseEntity addItem(@RequestBody ShoppingCartItem shoppingCartItem,
                            @PathVariable @NonNull String userId) {
         log.info("addItem: ShoppingCartItem: {}, userId: {}", shoppingCartItem, userId);
@@ -72,6 +72,25 @@ public class ShoppingCartController {
         }
 
     }
+
+//    @PutMapping("/shoppingCart/remove/{userId}")
+//    ResponseEntity removeItem(@RequestBody ShoppingCartItem shoppingCartItem,
+//                              @PathVariable @NonNull String userId) {
+//        log.info("removeItem: ShoppingCartItem: {}, userId: {}", shoppingCartItem, userId);
+//
+//        try {
+//            long userIdLongVal = Long.parseLong(userId);
+//            ShoppingCart res = shoppingCartService.removeItem(userIdLongVal, shoppingCartItem);
+//
+//            return ResponseEntity
+//                    .status(HttpStatus.CREATED)
+//                    .contentType(MediaType.APPLICATION_JSON)
+//                    .body(res);
+//
+//        } catch (NumberFormatException exp) {
+//            return NumberFormatExceptionResponse(exp);
+//        }
+//    }
 
     private ResponseEntity NumberFormatExceptionResponse(NumberFormatException exp) {
         log.error("userId conversion error: {}", exp);
